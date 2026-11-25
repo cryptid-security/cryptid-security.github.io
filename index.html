@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cryptid Security — defensive security tooling</title>
+<meta name="description" content="Open-source defensive security tooling — malware analysis, reverse engineering, DFIR, and application security. Zero-dependency, fully tested, offline-first." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230a0e16'/%3E%3Cpolygon points='50,12 82,31 82,69 50,88 18,69 18,31' fill='none' stroke='%2300ff9c' stroke-width='6'/%3E%3Ctext x='50' y='68' font-family='Arial' font-size='52' font-weight='800' fill='%23f0f6fc' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E" />
+<style>
+  :root{
+    --bg:#0a0e16; --bg2:#0e1420; --panel:#0d1320; --line:#1b2433;
+    --ink:#e6edf3; --muted:#9aa4b2; --dim:#6e7681;
+    --g1:#00ff9c; --g2:#00c2ff;
+    --accent:linear-gradient(90deg,var(--g1),var(--g2));
+    --maxw:1080px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Segoe UI',system-ui,-apple-system,Arial,sans-serif; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+
+  /* hero */
+  header{
+    position:relative; overflow:hidden;
+    background:
+      radial-gradient(1200px 500px at 50% -10%, rgba(0,255,156,.10), transparent 60%),
+      linear-gradient(180deg,#0b0f17,#0a0e16);
+    border-bottom:1px solid var(--line);
+  }
+  .grid-bg{position:absolute;inset:0;opacity:.5;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:64px 64px; mask-image:radial-gradient(70% 60% at 50% 0%,#000,transparent);}
+  .hero{position:relative;text-align:center;padding:76px 24px 64px}
+  .emblem{width:92px;height:92px;margin:0 auto 22px;display:block;filter:drop-shadow(0 0 14px rgba(0,255,156,.35))}
+  h1{font-size:clamp(34px,6vw,60px);margin:0;font-weight:800;letter-spacing:.5px}
+  h1 .sec{background:var(--accent);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .tag{color:var(--muted);font-size:clamp(15px,2.4vw,20px);margin:14px auto 6px;max-width:680px}
+  .sub{color:var(--dim);font-size:14px;margin-top:4px}
+  .cta{margin-top:28px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .btn{padding:11px 20px;border-radius:9px;font-weight:600;font-size:15px;border:1px solid var(--line);transition:.15s}
+  .btn.primary{background:var(--accent);color:#04110b;border-color:transparent}
+  .btn.primary:hover{filter:brightness(1.08)}
+  .btn.ghost:hover{border-color:var(--g1);color:var(--g1)}
+
+  /* stats */
+  .stats{display:flex;gap:40px;justify-content:center;flex-wrap:wrap;padding:26px 24px;border-bottom:1px solid var(--line);background:var(--bg2)}
+  .stat{text-align:center}
+  .stat b{display:block;font-size:26px;background:var(--accent);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .stat span{color:var(--dim);font-size:12.5px;text-transform:uppercase;letter-spacing:1px}
+
+  /* sections */
+  section{padding:56px 0}
+  .cat{margin-bottom:40px}
+  .cat h2{font-size:20px;margin:0 0 4px;display:flex;align-items:center;gap:10px}
+  .cat .note{color:var(--dim);font-size:13.5px;margin:0 0 18px}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:14px}
+  .card{display:block;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 16px 15px;transition:.15s;position:relative}
+  .card:hover{border-color:var(--g1);transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,.35)}
+  .card .name{font-weight:700;font-size:16px;letter-spacing:.3px}
+  .card .name::before{content:"";display:inline-block;width:7px;height:7px;border-radius:2px;background:var(--accent);margin-right:9px;vertical-align:middle}
+  .card .desc{color:var(--muted);font-size:13.5px;margin-top:7px}
+  .card .arrow{position:absolute;top:15px;right:15px;color:var(--dim);font-size:14px;transition:.15s}
+  .card:hover .arrow{color:var(--g1);transform:translateX(2px)}
+
+  /* principles */
+  .principles{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .principles .cards{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+  .prin{background:transparent;border:1px solid var(--line);border-radius:12px;padding:18px}
+  .prin b{display:block;margin-bottom:6px;font-size:15px}
+  .prin span{color:var(--muted);font-size:13.5px}
+  h2.center{text-align:center;font-size:22px;margin:0 0 6px}
+  .center-note{text-align:center;color:var(--dim);font-size:14px;margin:0 0 34px}
+
+  footer{text-align:center;padding:46px 24px;color:var(--dim);font-size:13.5px}
+  footer .mark{font-weight:700;color:var(--ink);letter-spacing:.5px}
+  footer a:hover{color:var(--g1)}
+  .rule{height:1px;background:var(--line);max-width:var(--maxw);margin:0 auto}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="grid-bg"></div>
+  <div class="hero">
+    <svg class="emblem" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <polygon points="50,8 86,29 86,71 50,92 14,71 14,29" fill="#0d1320" stroke="url(#g)" stroke-width="5"/>
+      <polygon points="50,8 86,29 86,71 50,92 14,71 14,29" fill="none" stroke="#00ff9c" stroke-width="1.4" opacity=".35" transform="scale(.86)" transform-origin="50 50"/>
+      <text x="50" y="68" font-family="Segoe UI,Arial" font-size="52" font-weight="800" fill="#f0f6fc" text-anchor="middle">C</text>
+      <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#00ff9c"/><stop offset="1" stop-color="#00c2ff"/></linearGradient></defs>
+    </svg>
+    <h1>CRYPTID <span class="sec">SECURITY</span></h1>
+    <p class="tag">Open-source defensive security tooling — malware analysis, reverse engineering, DFIR, and application security.</p>
+    <p class="sub">Zero-dependency by design · fully tested · offline-first · trust nothing, verify everything</p>
+    <div class="cta">
+      <a class="btn primary" href="https://github.com/cryptid-security">GitHub Organization</a>
+      <a class="btn ghost" href="#tools">Browse the tools</a>
+    </div>
+  </div>
+</header>
+
+<div class="stats">
+  <div class="stat"><b>15</b><span>open-source tools</span></div>
+  <div class="stat"><b>0</b><span>runtime deps</span></div>
+  <div class="stat"><b>100%</b><span>tested</span></div>
+  <div class="stat"><b>MIT</b><span>licensed</span></div>
+</div>
+
+<section id="tools"><div class="wrap">
+  <h2 class="center">The toolkit</h2>
+  <p class="center-note">Small, auditable tools that each do one job well — composable across the full defensive workflow.</p>
+
+  <div class="cat">
+    <h2>🔬 Malware Analysis &amp; Reverse Engineering</h2>
+    <p class="note">Pull configs, find injected code, unpack droppers, judge drivers.</p>
+    <div class="cards">
+      <a class="card" href="https://github.com/njuj/unmask"><span class="arrow">↗</span><div class="name">unmask</div><div class="desc">Config extractor for the AsyncRAT / DcRat / VenomRAT family — AES + PBKDF2, HMAC-verified.</div></a>
+      <a class="card" href="https://github.com/njuj/kira-scan"><span class="arrow">↗</span><div class="name">kira-scan</div><div class="desc">PE triage with a pure-Python YARA engine — strings, conditions, pe/math/hash modules.</div></a>
+      <a class="card" href="https://github.com/njuj/ghost-hunter"><span class="arrow">↗</span><div class="name">ghost-hunter</div><div class="desc">Live memory scanner — finds injected and hollowed code by walking thread stacks.</div></a>
+      <a class="card" href="https://github.com/njuj/unwrap"><span class="arrow">↗</span><div class="name">unwrap</div><div class="desc">Dropper unpacker for .lnk, .hta, and HTML-smuggling — without executing the payload.</div></a>
+      <a class="card" href="https://github.com/njuj/driver-guard"><span class="arrow">↗</span><div class="name">driver-guard</div><div class="desc">BYOVD analyzer — flags the vulnerable-driver capabilities attackers abuse.</div></a>
+    </div>
+  </div>
+
+  <div class="cat">
+    <h2>🕵️ DFIR &amp; Threat Intelligence</h2>
+    <p class="note">Hunt logs and traffic, turn reports into structured intel.</p>
+    <div class="cards">
+      <a class="card" href="https://github.com/njuj/evtx-hunter"><span class="arrow">↗</span><div class="name">evtx-hunter</div><div class="desc">Windows Event Log hunter with its own Sigma engine — correlates bursts, decodes PowerShell.</div></a>
+      <a class="card" href="https://github.com/njuj/panoptes"><span class="arrow">↗</span><div class="name">panoptes</div><div class="desc">PCAP analyzer — detects RAT / Cobalt Strike certs, DoH, and suspicious TLS by fingerprint.</div></a>
+      <a class="card" href="https://github.com/njuj/ioc-hunter"><span class="arrow">↗</span><div class="name">ioc-hunter</div><div class="desc">Turns a threat report into clean defanged IOCs and STIX 2.1 bundles — 100% client-side.</div></a>
+    </div>
+  </div>
+
+  <div class="cat">
+    <h2>🌐 Application &amp; Supply-Chain Security</h2>
+    <p class="note">Audit headers, email, bundles, and dependencies.</p>
+    <div class="cards">
+      <a class="card" href="https://github.com/njuj/headerguard"><span class="arrow">↗</span><div class="name">headerguard</div><div class="desc">HTTP security-header auditor and CSP generator — grades a site, hands back a policy.</div></a>
+      <a class="card" href="https://github.com/njuj/mailguard"><span class="arrow">↗</span><div class="name">mailguard</div><div class="desc">Email anti-spoofing grader (SPF / DKIM / DMARC / MTA-STS) with a --fix that writes records.</div></a>
+      <a class="card" href="https://github.com/njuj/bundle-leak"><span class="arrow">↗</span><div class="name">bundle-leak</div><div class="desc">Scans deployed JS bundles and source maps for leaked secrets and recoverable source.</div></a>
+      <a class="card" href="https://github.com/njuj/slopcheck"><span class="arrow">↗</span><div class="name">slopcheck</div><div class="desc">Dependency supply-chain risk — OSV advisories, typosquat detection, secret scanning.</div></a>
+      <a class="card" href="https://github.com/njuj/provenance"><span class="arrow">↗</span><div class="name">provenance</div><div class="desc">Verifies PyPI PEP 740 attestations and checks for starjacking before you install.</div></a>
+    </div>
+  </div>
+
+  <div class="cat">
+    <h2>🧠 AI &amp; Content Security</h2>
+    <p class="note">Reveal what the eye can't see.</p>
+    <div class="cards">
+      <a class="card" href="https://github.com/njuj/unseen"><span class="arrow">↗</span><div class="name">unseen</div><div class="desc">Reveals hidden text and prompt-injection — zero-width chars, Unicode tricks, invisible PDF layers.</div></a>
+    </div>
+  </div>
+
+  <div class="cat">
+    <h2>🛡️ System Hardening</h2>
+    <p class="note">Check the controls that actually matter.</p>
+    <div class="cards">
+      <a class="card" href="https://github.com/njuj/harden-check"><span class="arrow">↗</span><div class="name">harden-check</div><div class="desc">Windows security-posture auditor — checks real controls and tells you how to fix each gap.</div></a>
+    </div>
+  </div>
+</div></section>
+
+<section class="principles"><div class="wrap">
+  <h2 class="center">Engineering principles</h2>
+  <p class="center-note">Why these tools behave the way they do.</p>
+  <div class="cards">
+    <div class="prin"><b>Zero-dependency by design</b><span>Standard library first. Fewer moving parts, a smaller attack surface, nothing to install on an air-gapped box.</span></div>
+    <div class="prin"><b>Offline-first</b><span>Analysis never requires the network. What reaches out is explicit and optional.</span></div>
+    <div class="prin"><b>Reproducible</b><span>Every result can be checked by hand. No magic, no hidden model, no telemetry.</span></div>
+    <div class="prin"><b>Tested</b><span>Each tool ships with its own suite. A change that breaks behaviour breaks a test first.</span></div>
+    <div class="prin"><b>One job each</b><span>Small tools that compose, not a monolith.</span></div>
+    <div class="prin"><b>Trust nothing, verify everything</b><span>Read the source. Confirm the output. Assume nothing in between.</span></div>
+  </div>
+</div></section>
+
+<div class="rule"></div>
+<footer>
+  <div class="mark">CRYPTID SECURITY</div>
+  <p>Defensive tooling for people who read the source. · <a href="https://github.com/cryptid-security">github.com/cryptid-security</a></p>
+</footer>
+
+</body>
+</html>
