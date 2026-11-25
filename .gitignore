@@ -1,0 +1,16 @@
+node_modules
+dist
+*.local
+.DS_Store
+.claude
+
+# Stray files copied in when this session moved folders — not part of the site.
+/avatar/
+/njuj/
+/projects/
+/tools/
+/kira-avatar.png
+/kira-emblem-1024.png
+/kira-emblem.png
+/kira-emblem.svg
+/strip-claude-trailers.ps1
