@@ -121,6 +121,41 @@ a {
   }
 }
 
+/* rotating conic border for the closing CTA */
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+.border-spin {
+  animation: border-spin 7s linear infinite;
+}
+@keyframes border-spin {
+  to {
+    --angle: 360deg;
+  }
+}
+
+/* brass scrollbar */
+* {
+  scrollbar-color: var(--color-brassdim) var(--color-ink);
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-ink);
+}
+::-webkit-scrollbar-thumb {
+  background: #2a2a22;
+  border-radius: 8px;
+  border: 2px solid var(--color-ink);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brassdim);
+}
+
 /* ───────────────────────── atmosphere cards ───────────────────────── */
 .atm-card {
   background: linear-gradient(180deg, #0c110e, #0a0e0c);

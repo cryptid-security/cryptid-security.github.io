@@ -1,8 +1,10 @@
 import Header from "./components/Header";
 import Hero from "./components/Hero";
 import Marquee from "./components/Marquee";
+import StatsBand from "./components/StatsBand";
 import Catalogue from "./components/Catalogue";
 import Tenets from "./components/Tenets";
+import ClosingCTA from "./components/ClosingCTA";
 import Reveal from "./components/Reveal";
 import { GH_ORG } from "./data";
 
@@ -24,10 +26,12 @@ export default function App() {
       </section>
 
       <Marquee />
+      <StatsBand />
       <Catalogue />
       <Tenets />
+      <ClosingCTA />
 
-      <footer className="py-[60px] pb-[72px]">
+      <footer className="border-t py-[56px] pb-[72px]" style={{ borderColor: "var(--line)" }}>
         <div className="mx-auto flex w-full max-w-[980px] flex-wrap items-end justify-between gap-6 px-[34px]">
           <div className="font-display text-[23px] font-medium">
             Cryptid <em className="font-normal not-italic text-brass2 [font-style:italic]">Security</em>
